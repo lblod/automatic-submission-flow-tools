@@ -1,4 +1,4 @@
-import * as env from './env.js';
+import * as cts from './constants.js';
 import { querySudo as query, updateSudo as update } from '@lblod/mu-auth-sudo';
 import {
   uuid,
@@ -11,7 +11,7 @@ export async function getTaskInfoFromRemoteDataObject(remoteDataObjectUri) {
   const remoteDataObjectUriSparql = sparqlEscapeUri(remoteDataObjectUri);
   //TODO this query is rather fragile, relying on the links between melding, job and task via non-documented properties, made by the download-url-service
   const taskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     SELECT ?task ?job ?oldStatus ?submissionGraph ?fileUri ?errorMsg WHERE {
       ?melding nie:hasPart ${remoteDataObjectUriSparql} .
       GRAPH ?submissionGraph {
@@ -53,14 +53,14 @@ export async function downloadTaskUpdate(
   errorMsg
 ) {
   switch (newDLStatus) {
-    case env.DOWNLOAD_STATUSES.ongoing:
-      if (oldASSStatus === env.TASK_STATUSES.scheduled)
+    case cts.DOWNLOAD_STATUSES.ongoing:
+      if (oldASSStatus === cts.TASK_STATUSES.scheduled)
         return downloadStarted(submissionGraph, downloadTaskUri);
       break;
-    case env.DOWNLOAD_STATUSES.success:
+    case cts.DOWNLOAD_STATUSES.success:
       if (
-        oldASSStatus === env.TASK_STATUSES.scheduled ||
-        oldASSStatus === env.TASK_STATUSES.busy
+        oldASSStatus === cts.TASK_STATUSES.scheduled ||
+        oldASSStatus === cts.TASK_STATUSES.busy
       ) {
         await complementLogicalFileMetaData(
           submissionGraph,
@@ -74,10 +74,10 @@ export async function downloadTaskUpdate(
         );
       }
       break;
-    case env.DOWNLOAD_STATUSES.failure:
+    case cts.DOWNLOAD_STATUSES.failure:
       if (
-        oldASSStatus === env.TASK_STATUSES.busy ||
-        oldASSStatus === env.TASK_STATUSES.scheduled
+        oldASSStatus === cts.TASK_STATUSES.busy ||
+        oldASSStatus === cts.TASK_STATUSES.scheduled
       )
         return downloadFail(
           submissionGraph,
@@ -104,7 +104,7 @@ async function complementLogicalFileMetaData(
 ) {
   const submissionGraphSparql = sparqlEscapeUri(submissionGraph);
   return update(`
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     INSERT {
       GRAPH ${submissionGraphSparql} {
         ${sparqlEscapeUri(logicalFileUri)}
@@ -140,7 +140,7 @@ export async function downloadTaskCreate(
   const inputContainerUuid = uuid();
   const harvestingCollectionUuid = uuid();
   const downloadTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     INSERT DATA {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         asj:${downloadTaskUuid}
@@ -170,7 +170,7 @@ export async function downloadTaskCreate(
   `;
   await update(downloadTaskQuery);
 
-  const downloadTaskUri = env.JOB_PREFIX.concat(downloadTaskUuid);
+  const downloadTaskUri = cts.BASE_TABLE.job.concat(downloadTaskUuid);
   return downloadTaskUri;
 }
 
@@ -178,7 +178,7 @@ async function downloadStarted(submissionGraph, downloadTaskUri) {
   const nowSparql = sparqlEscapeDateTime(new Date().toISOString());
   const downloadTaskUriSparql = sparqlEscapeUri(downloadTaskUri);
   const downloadTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${downloadTaskUriSparql}
@@ -213,7 +213,7 @@ async function downloadSuccess(
   const resultContainerUuid = uuid();
   const downloadTaskUriSparql = sparqlEscapeUri(downloadTaskUri);
   const downloadTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${downloadTaskUriSparql}
@@ -273,7 +273,7 @@ async function downloadFail(
     ? `task:resultsContainer asj:${resultContainerUuid} ;`
     : '';
   const downloadTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${downloadTaskUriSparql}
@@ -305,7 +305,7 @@ async function downloadFail(
   //Also set the job to failure
   const jobUriSparql = sparqlEscapeUri(jobUri);
   const assJobQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${jobUriSparql}

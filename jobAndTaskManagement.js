@@ -1,4 +1,4 @@
-import * as env from './env.js';
+import * as cts from './constants.js';
 import { querySudo as query, updateSudo as update } from '@lblod/mu-auth-sudo';
 import {
   uuid,
@@ -18,7 +18,7 @@ export async function startJob(submissionGraph, meldingUri) {
     // Make a cogs:Job for the whole process
     // The prov:generated is strictly not necessary for the model, maybe nice to have
     const jobQuery = `
-      ${env.PREFIXES}
+      ${cts.SPARQL_PREFIXES}
       INSERT DATA {
         GRAPH ${sparqlEscapeUri(submissionGraph)} {
           asj:${jobUuid}
@@ -39,7 +39,7 @@ export async function startJob(submissionGraph, meldingUri) {
     // Create a task for the automatic submission as the first step in the flow
     const submissionTaskUuid = uuid();
     const submissionTaskQuery = `
-      ${env.PREFIXES}
+      ${cts.SPARQL_PREFIXES}
       INSERT DATA {
         GRAPH ${sparqlEscapeUri(submissionGraph)} {
           asj:${submissionTaskUuid}
@@ -58,9 +58,9 @@ export async function startJob(submissionGraph, meldingUri) {
     `;
     await update(submissionTaskQuery);
 
-    const jobUri = env.JOB_PREFIX.concat(jobUuid);
+    const jobUri = cts.BASE_TABLE.job.concat(jobUuid);
     const automaticSubmissionTaskUri =
-      env.JOB_PREFIX.concat(submissionTaskUuid);
+      cts.BASE_TABLE.job.concat(submissionTaskUuid);
     return { jobUri, automaticSubmissionTaskUri };
   } catch (e) {
     console.error(e);
@@ -130,7 +130,7 @@ const JobStatusFrame = {
 };
 export async function getSubmissionStatusRdfJS(submissionUri) {
   const response = await query(`
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     CONSTRUCT {
       ?job
         a cogs:Job ;
@@ -185,7 +185,7 @@ export async function automaticSubmissionTaskSuccess(
   const resultContainerUuid = uuid();
   const harvestingCollectionUuid = uuid();
   const assTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${automaticSubmissionTaskUriSparql}
@@ -236,7 +236,7 @@ export async function automaticSubmissionTaskFail(
   );
   const errorUriSparql = sparqlEscapeUri(errorUri);
   const assTaskQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${automaticSubmissionTaskUriSparql}
@@ -265,7 +265,7 @@ export async function automaticSubmissionTaskFail(
   //Also set the job to failure
   const jobUriSparql = sparqlEscapeUri(jobUri);
   const assJobQuery = `
-    ${env.PREFIXES}
+    ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ${sparqlEscapeUri(submissionGraph)} {
         ${jobUriSparql}
