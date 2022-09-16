@@ -1,0 +1,33 @@
+{
+  "name": "automatic-submission-flow-tools",
+  "version": "1.0.0",
+  "description": "Collection of reusable functions used throughout the automatic-submission flow.",
+  "main": "tools.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/automatic-submission-flow-tools.git"
+  },
+  "keywords": [
+    "automatic-submission",
+    "automatic-submission-flow",
+    "utils",
+    "tools"
+  ],
+  "author": "LBLOD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lblod/automatic-submission-flow-tools/issues"
+  },
+  "homepage": "https://github.com/lblod/automatic-submission-flow-tools#readme",
+  "devDependencies": {
+    "jsdoc": "^3.6.11",
+    "jsdoc-to-markdown": "^7.1.1"
+  },
+  "scripts": {
+    "doc-html": "jsdoc -c .jsdoc.json `git ls-files`",
+    "doc-md": "jsdoc2md -c .jsdoc.json `git ls-files` > docs.md"
+  }
+}

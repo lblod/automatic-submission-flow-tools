@@ -1,3 +1,8 @@
+/**
+ * @module jobs
+ * @description Create and update Jobs in the triplestore.
+ */
+
 import * as mu from 'mu';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
@@ -14,7 +19,7 @@ const { namedNode, quad } = N3.DataFactory;
  * @param {namedNode} activity - A resource (submission, notification, ...) that triggered the creation of this Job.
  * @param {namedNode} creator - The identifier for the service that creates this Job.
  * @param {namedNode} graph - The graph in which this Job is to be store in the triplestore.
- * @returns {namedNode} Represents the IRI of the newly created Job.
+ * @returns {namedNode} The IRI representing the newly created Job.
  */
 export async function create(activity, creator, graph) {
   const jobUuid = mu.uuid();
@@ -49,8 +54,8 @@ export async function create(activity, creator, graph) {
  * @function
  * @param {namedNode} job - Represents the Job of which the status is to be updated.
  * @param {namedNode} status - The new status for this Job.
- * @param {namedNode} error - OPTIONAL Only when the new status is to indicate failure: link the Job to this error entity.
- * @returns {undefined}
+ * @param {namedNode} [error] - Only when the new status is to indicate failure: link the Job to this error entity.
+ * @returns {undefined} Nothing
  */
 export async function updateStatus(job, status, error) {
   const jobUriSparql = mu.sparqlEscapeUri(job.value);
