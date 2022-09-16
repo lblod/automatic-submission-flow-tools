@@ -11,17 +11,15 @@ export const TASK_STATUSES = {
   failed: 'http://redpencil.data.gift/id/concept/JobStatus/failed',
 };
 export const JOB_STATUSES = {
-  //TODO
+  busy: 'http://redpencil.data.gift/id/concept/JobStatus/busy',
+  success: 'http://redpencil.data.gift/id/concept/JobStatus/success',
+  failed: 'http://redpencil.data.gift/id/concept/JobStatus/failed',
 };
 export const SUBMISSION_STATUSES = {
   concept:
     'http://lblod.data.gift/concepts/79a52da4-f491-4e2f-9374-89a13cde8ecd',
   submittable:
     'http://lblod.data.gift/concepts/f6330856-e261-430f-b949-8e510d20d0ff',
-};
-
-export const BASE_TABLE = {
-  job: 'http://data.lblod.info/id/automatic-submission-job/',
 };
 
 export const PREFIX_TABLE = {
@@ -63,6 +61,10 @@ export const PREFIX_TABLE = {
 
 export const PREDICATE_TABLE = {
   adms_status: `${PREFIX_TABLE.adms}status`,
+};
+
+export const BASE_TABLE = {
+  job: PREFIX_TABLE.asj,
 };
 
 export const SPARQL_PREFIXES = (() => {
