@@ -24,10 +24,16 @@
   "homepage": "https://github.com/lblod/automatic-submission-flow-tools#readme",
   "devDependencies": {
     "jsdoc": "^3.6.11",
-    "jsdoc-to-markdown": "^7.1.1"
+    "jsdoc-to-markdown": "^7.1.1",
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
   },
   "scripts": {
     "doc-html": "jsdoc -c .jsdoc.json `git ls-files`",
-    "doc-md": "jsdoc2md -c .jsdoc.json `git ls-files` > docs.md"
+    "doc-md": "jsdoc2md -c .jsdoc.json `git ls-files` > docs.md",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --cache --fix"
   }
 }
