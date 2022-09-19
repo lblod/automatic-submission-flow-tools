@@ -47,7 +47,7 @@ export async function create(activity, creator, graph) {
 }
 
 /**
- * Update the status of an existing Job in the triplestore.
+ * Update the status of an existing Job in the triplestore with the possibility to also store an error on failure.
  *
  * @public
  * @async
@@ -62,7 +62,7 @@ export async function updateStatus(job, status, error) {
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
   const errorTriple =
     status.value === cts.JOB_STATUSES.fail && error
-      ? `${jobUriSparql} task:error ${mu.sparqlEscapeUri(error).value}`
+      ? `${jobUriSparql} task:error ${mu.sparqlEscapeUri(error).value} .`
       : '';
   const statusQuery = `
     ${cts.SPARQL_PREFIXES}
@@ -100,7 +100,7 @@ export async function updateStatus(job, status, error) {
  * @param {namedNode} activity - The resource (submission, notification, ...) that once triggered the creation of a Job.
  * @returns {store} A store containing information about the Job status, type, activity and optional error with its message.
  */
-export async function getStatus(activity) {
+export async function getStatusFromActivity(activity) {
   const activitySparql = mu.sparqlEscapeUri(activity.value);
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
