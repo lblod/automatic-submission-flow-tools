@@ -23,12 +23,13 @@ const { namedNode, quad } = N3.DataFactory;
  */
 export async function create(activity, creator, graph) {
   const jobUuid = mu.uuid();
+  const jobUri = cts.BASE_TABLE.job.concat(jobUuid);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
   const jobQuery = `
     ${cts.SPARQL_PREFIXES}
     INSERT DATA {
       GRAPH ${mu.sparqlEscapeUri(graph.value)} {
-        asj:${jobUuid}
+        ${mu.sparqlEscapeUri(jobUri)}
           a cogs:Job ;
           mu:uuid ${mu.sparqlEscapeString(jobUuid)} ;
           dct:creator ${mu.sparqlEscapeUri(creator.value)} ;
@@ -42,7 +43,6 @@ export async function create(activity, creator, graph) {
     }
   `;
   await mas.updateSudo(jobQuery);
-  const jobUri = cts.BASE_TABLE.job.concat(jobUuid);
   return namedNode(jobUri);
 }
 
