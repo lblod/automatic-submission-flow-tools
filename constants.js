@@ -1,27 +1,3 @@
-export const DOWNLOAD_STATUSES = {
-  scheduled: 'http://lblod.data.gift/file-download-statuses/sheduled',
-  ongoing: 'http://lblod.data.gift/file-download-statuses/ongoing',
-  success: 'http://lblod.data.gift/file-download-statuses/success',
-  failure: 'http://lblod.data.gift/file-download-statuses/failure',
-};
-export const TASK_STATUSES = {
-  scheduled: 'http://redpencil.data.gift/id/concept/JobStatus/scheduled',
-  busy: 'http://redpencil.data.gift/id/concept/JobStatus/busy',
-  success: 'http://redpencil.data.gift/id/concept/JobStatus/success',
-  failed: 'http://redpencil.data.gift/id/concept/JobStatus/failed',
-};
-export const JOB_STATUSES = {
-  busy: 'http://redpencil.data.gift/id/concept/JobStatus/busy',
-  success: 'http://redpencil.data.gift/id/concept/JobStatus/success',
-  failed: 'http://redpencil.data.gift/id/concept/JobStatus/failed',
-};
-export const SUBMISSION_STATUSES = {
-  concept:
-    'http://lblod.data.gift/concepts/79a52da4-f491-4e2f-9374-89a13cde8ecd',
-  submittable:
-    'http://lblod.data.gift/concepts/f6330856-e261-430f-b949-8e510d20d0ff',
-};
-
 export const PREFIX_TABLE = {
   meb: 'http://rdf.myexperiment.org/ontologies/base/',
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -65,6 +41,47 @@ export const PREDICATE_TABLE = {
 
 export const BASE_TABLE = {
   job: PREFIX_TABLE.asj,
+  task: PREFIX_TABLE.asj,
+  resultsContainer: PREFIX_TABLE.asj,
+  inputContainer: PREFIX_TABLE.asj,
+  harvestingCollection: PREFIX_TABLE.asj,
+};
+
+export const DOWNLOAD_STATUSES = {
+  scheduled: 'http://lblod.data.gift/file-download-statuses/sheduled',
+  ongoing: 'http://lblod.data.gift/file-download-statuses/ongoing',
+  success: 'http://lblod.data.gift/file-download-statuses/success',
+  failure: 'http://lblod.data.gift/file-download-statuses/failure',
+};
+export const TASK_STATUSES = {
+  scheduled: `${PREFIX_TABLE.js}scheduled`,
+  busy: `${PREFIX_TABLE.js}busy`,
+  success: `${PREFIX_TABLE.js}success`,
+  failed: `${PREFIX_TABLE.js}failed`,
+};
+export const JOB_STATUSES = {
+  busy: `${PREFIX_TABLE.js}busy`,
+  success: `${PREFIX_TABLE.js}success`,
+  failed: `${PREFIX_TABLE.js}failed`,
+};
+export const SUBMISSION_STATUSES = {
+  concept:
+    'http://lblod.data.gift/concepts/79a52da4-f491-4e2f-9374-89a13cde8ecd',
+  submittable:
+    'http://lblod.data.gift/concepts/f6330856-e261-430f-b949-8e510d20d0ff',
+};
+
+export const SERVICES = {
+  automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
+};
+
+export const OPERATIONS = {
+  register: `${PREFIX_TABLE.tasko}register`,
+  download: `${PREFIX_TABLE.tasko}download`,
+};
+export const COGS_OPERATION = {
+  transformation: `${PREFIX_TABLE.cogs}TransformationProcess`,
+  webServiceLookup: `${PREFIX_TABLE.cogs}WebServiceLookup`,
 };
 
 export const SPARQL_PREFIXES = (() => {
