@@ -35,6 +35,10 @@ export const PREFIX_TABLE = {
   hrvst: 'http://lblod.data.gift/vocabularies/harvesting/',
 };
 
+export const GRAPHS = {
+  error: 'http://mu.semte.ch/graphs/error',
+};
+
 export const PREDICATE_TABLE = {
   adms_status: `${PREFIX_TABLE.adms}status`,
 };
@@ -42,6 +46,7 @@ export const PREDICATE_TABLE = {
 export const BASE_TABLE = {
   job: PREFIX_TABLE.asj,
   task: PREFIX_TABLE.asj,
+  error: 'http://data.lblod.info/errors/',
   resultsContainer: PREFIX_TABLE.asj,
   inputContainer: PREFIX_TABLE.asj,
   harvestingCollection: PREFIX_TABLE.asj,
