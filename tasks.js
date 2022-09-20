@@ -31,12 +31,12 @@ export async function create(
   status,
   index,
   job,
-  { files, remoteDataObjects },
+  inputs,
   graph,
   cogsOperation
 ) {
-  files = files || [];
-  remoteDataObjects = remoteDataObjects || [];
+  const files = inputs?.files || [];
+  const remoteDataObjects = inputs?.remoteDataObjects || [];
   const taskUuid = mu.uuid();
   const taskUri = cts.BASE_TABLE.task.concat(taskUuid);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
@@ -144,15 +144,9 @@ export async function create(
  * @param {namedNode} [error] - Only when the new status is to indicate failure: link the Task to this error entity.
  * @returns {undefined} Nothing
  */
-export async function updateStatus(
-  task,
-  status,
-  creator,
-  { files, remoteDataObjects },
-  error
-) {
-  files = files || [];
-  remoteDataObjects = remoteDataObjects || [];
+export async function updateStatus(task, status, creator, results, error) {
+  const files = results?.files || [];
+  const remoteDataObjects = results?.remoteDataObjects || [];
   const taskUriSparql = mu.sparqlEscapeUri(task.value);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
   const writer = new N3.Writer();
