@@ -16,12 +16,20 @@ const { namedNode, quad } = N3.DataFactory;
  * @public
  * @async
  * @function
+ * @param {namedNode} operation - Define the Job's operation from the Task Operations ontology to distinguish between Jobs.
  * @param {namedNode} activity - A resource (submission, notification, ...) that triggered the creation of this Job.
  * @param {namedNode} creator - The identifier for the service that creates this Job.
+ * @param {namedNode} cogsOperation - Define the Job's operation from the Cogs ontology.
  * @param {namedNode} graph - The graph in which this Job is to be store in the triplestore.
  * @returns {namedNode} The IRI representing the newly created Job.
  */
-export async function create(activity, creator, graph) {
+export async function create(
+  operation,
+  activity,
+  creator,
+  cogsOperation,
+  graph
+) {
   const jobUuid = mu.uuid();
   const jobUri = cts.BASE_TABLE.job.concat(jobUuid);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
@@ -36,12 +44,13 @@ export async function create(activity, creator, graph) {
           adms:status ${mu.sparqlEscapeUri(cts.JOB_STATUSES.busy)} ;
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
-          task:cogsOperation cogs:TransformationProcess ;
-          task:operation jobo:automaticSubmissionFlow ;
+          task:operation ${mu.sparqlEscapeUri(operation.value)} ;
+          task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)}
           prov:generatedBy ${mu.sparqlEscapeUri(activity.value)} .
       }
-    }
-  `;
+    }`;
+  //task:operation jobo:automaticSubmissionFlow ;
+  //task:cogsOperation cogs:TransformationProcess ;
   await mas.updateSudo(jobQuery);
   return namedNode(jobUri);
 }

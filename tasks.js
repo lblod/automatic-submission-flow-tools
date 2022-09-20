@@ -21,8 +21,8 @@ const { namedNode, literal } = N3.DataFactory;
  * @param {integer} index - Index number for this task, used by a job-controller to manage ordering of tasks.
  * @param {namedNode} job - The IRI of the Job that is the parent for this Task.
  * @param { { files: array(namedNode), remoteDataObjects: array(namedNode) } } [inputs] - Link either files or remote data objects to this Task as part of its inputs container.
+ * @param {namedNode} cogsOperation - Define the Tasks' operation from the Cogs ontology.
  * @param {namedNode} graph - The graph in which this Task is to be store in the triplestore.
- * @param {namedNode} [cogsOperation] - Define the Tasks' operation from the Cogs ontology.
  * @returns {namedNode} The IRI representing the newly created Task.
  */
 export async function create(
@@ -32,15 +32,15 @@ export async function create(
   index,
   job,
   inputs,
-  graph,
-  cogsOperation
+  cogsOperation,
+  graph
 ) {
   const files = inputs?.files || [];
   const remoteDataObjects = inputs?.remoteDataObjects || [];
   const taskUuid = mu.uuid();
   const taskUri = cts.BASE_TABLE.task.concat(taskUuid);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
-  cogsOperation = cogsOperation || namedNode(cts.COGS_OPERATION.transformation);
+  //cogsOperation = cogsOperation || namedNode(cts.COGS_OPERATION.transformation);
   const writer = new N3.Writer();
 
   if (files.length || remoteDataObjects.length) {
