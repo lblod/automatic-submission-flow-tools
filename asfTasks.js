@@ -7,9 +7,7 @@ import * as mu from 'mu';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as tsk from './tasks.js';
-import * as N3 from 'n3';
 import * as sjp from 'sparqljson-parse';
-const { namedNode, literal } = N3.DataFactory;
 
 /**
  * Create a Task and store it in the triplestore.

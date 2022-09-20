@@ -45,7 +45,7 @@ export async function create(
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
           task:operation ${mu.sparqlEscapeUri(operation.value)} ;
-          task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)}
+          task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)} ;
           prov:generatedBy ${mu.sparqlEscapeUri(activity.value)} .
       }
     }`;
