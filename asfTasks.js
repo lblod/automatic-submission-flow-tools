@@ -10,46 +10,18 @@ import * as tsk from './tasks.js';
 import * as sjp from 'sparqljson-parse';
 
 /**
- * Create a Task and store it in the triplestore.
- *
- * @see tasks.create
- * @public
- * @async
- * @function
- * @param {namedNode} operation - Define the Tasks' operation so that a job-controller can place this task with the correct step in its configured pipeline.
- * @param {namedNode} creator - The identifier for the service that creates this Task.
- * @param {namedNode} status - The inital status for this Task (usually scheduled, busy or equivalent).
- * @param {integer} index - Index number for this task, used by a job-controller to manage ordering of tasks.
- * @param {namedNode} job - The IRI of the Job that is the parent for this Task.
- * @param { { files: array(namedNode), remoteDataObjects: array(namedNode) } } [inputs] - Link either files or remote data objects to this Task as part of its inputs container.
- * @param {namedNode} cogsOperation - Define the Tasks' operation from the Cogs ontology.
- * @param {namedNode} graph - The graph in which this Task is to be store in the triplestore.
- * @returns {namedNode} The IRI representing the newly created Task.
+ * @see {@link module:tasks.create}
  */
 export async function create() {
   return tsk.create(...arguments);
 }
 
 /**
- * Update the status of an existing Task in the triplestore with the possibility to also store its results on success or an error on failure.
- *
- * @see task.updateStatus
- * @public
- * @async
- * @function
- * @param {namedNode} task - Represents the Task of which the status is to be updated.
- * @param {namedNode} status - The new status for this Task.
- * @param {namedNode} creator - The identifier for the service that updates this Task.
- * @param { { files: array(namedNode), remoteDataObjects: array(namedNode) } } [results] - Only when the new status is to indicate success: link either files or remote data objects to this Task as part of its results container.
- * @param {namedNode} [error] - Only when the new status is to indicate failure: link the Task to this error entity.
- * @returns {undefined} Nothing
+ * @see {@link module:task.updateStatus}
  */
 export async function updateStatus() {
   return tsk.updateStatus(...arguments);
 }
-
-//export async function getStatusFromActivity(jobActivity, operation) {
-//}
 
 /**
  * Get some information about a task starting from a given remote data object that should be related to a single task.
