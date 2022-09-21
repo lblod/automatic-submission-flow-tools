@@ -23,8 +23,8 @@ export async function getSubmissionInfoFromRemoteDataObject(remoteDataObject) {
   const remoteDataObjectSparql = mu.sparqlEscapeUri(remoteDataObject.value);
   const infoQuery = `
     ${cts.SPARQL_PREFIXES}
-    SELECT ?submission ?documentUrl ?file ?submittedDocument WHERE {
-      GRAPH ?g {
+    SELECT ?submission ?documentUrl ?file ?submittedDocument ?graph WHERE {
+      GRAPH ?graph {
         ?file
           nie:dataSource ${remoteDataObjectSparql} .
         ?submission

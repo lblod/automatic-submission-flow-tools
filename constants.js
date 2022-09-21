@@ -51,6 +51,8 @@ export const BASE_TABLE = {
   resultsContainer: PREFIX_TABLE.asj,
   inputContainer: PREFIX_TABLE.asj,
   harvestingCollection: PREFIX_TABLE.asj,
+  remoteDataObject: 'http://data.lblod.info/id/remote-data-objects/',
+  file: PREFIX_TABLE.asj,
 };
 
 export const DOWNLOAD_STATUSES = {
@@ -91,6 +93,10 @@ export const OPERATIONS = {
 export const COGS_OPERATIONS = {
   transformation: `${PREFIX_TABLE.cogs}TransformationProcess`,
   webServiceLookup: `${PREFIX_TABLE.cogs}WebServiceLookup`,
+};
+
+export const FORMATS = {
+  ttl: 'text/turtle',
 };
 
 export const SPARQL_PREFIXES = (() => {
