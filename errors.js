@@ -1,6 +1,6 @@
 /**
  * @module errors
- * @description Manage storing erros to the triplestore.
+ * @description Manage storing errors to the triplestore.
  */
 
 import * as mu from 'mu';

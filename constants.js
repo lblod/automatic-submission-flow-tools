@@ -41,6 +41,7 @@ export const GRAPHS = {
 
 export const PREDICATE_TABLE = {
   adms_status: `${PREFIX_TABLE.adms}status`,
+  task_operation: `${PREFIX_TABLE.task}operation`,
 };
 
 export const BASE_TABLE = {
@@ -78,14 +79,16 @@ export const SUBMISSION_STATUSES = {
 
 export const SERVICES = {
   automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
+  importSubmision: `${PREFIX_TABLE.services}import-submission-service`,
 };
 
 export const OPERATIONS = {
   register: `${PREFIX_TABLE.tasko}register`,
   download: `${PREFIX_TABLE.tasko}download`,
+  import: `${PREFIX_TABLE.tasko}import`,
   automaticSubmissionFlow: `${PREFIX_TABLE.jobo}automaticSubmissionFlow`,
 };
-export const COGS_OPERATION = {
+export const COGS_OPERATIONS = {
   transformation: `${PREFIX_TABLE.cogs}TransformationProcess`,
   webServiceLookup: `${PREFIX_TABLE.cogs}WebServiceLookup`,
 };
