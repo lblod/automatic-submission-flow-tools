@@ -83,7 +83,7 @@ export const SERVICES = {
 export const OPERATIONS = {
   register: `${PREFIX_TABLE.tasko}register`,
   download: `${PREFIX_TABLE.tasko}download`,
-  automaticSubmissionFlow: `${PREFIX_TABLE.tasko}automaticSubmissinoFlow`,
+  automaticSubmissionFlow: `${PREFIX_TABLE.jobo}automaticSubmissionFlow`,
 };
 export const COGS_OPERATION = {
   transformation: `${PREFIX_TABLE.cogs}TransformationProcess`,
