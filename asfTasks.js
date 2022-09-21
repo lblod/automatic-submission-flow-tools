@@ -83,3 +83,26 @@ export async function getTaskInfoFromRemoteDataObject(remoteDataObject) {
   const parsedResults = sparqlJsonParser.parseJsonResults(response);
   return parsedResults[0];
 }
+
+/**
+ * Search for the files that may be linked to a certain Task through its input container. These could be logical files or remote data objects.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} task - The task that might have an input container with attached files.
+ * @returns {array(object)} An array with objects of the structure `{ file: namedNode }` that refer to the attached (logical) files.
+ */
+export async function getInputFilesFromTask(task) {
+  const fileQuery = `
+    ${cts.SPARQL_PREFIXES}
+    SELECT ?file WHERE {
+      ${mu.sparqlEscapeUri(task.value)}
+        task:inputContainer ?inputContainer .
+      ?inputContainer
+        task:hasFile ?file .
+    }`;
+  const response = await mas.querySudo(fileQuery);
+  const sparqlJsonParser = new sjp.SparqlJsonParser();
+  return sparqlJsonParser.parseJsonResults(response);
+}
