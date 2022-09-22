@@ -34,3 +34,17 @@ export async function createFromContent(content, graph) {
   await fs.writeFile(filesData.physicalFilePath, buffer, 'utf-8');
   return filesData;
 }
+
+/**
+ * Load the contents of a file given by its path.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} physicalFile - Represents the IRI of the physical file. Usually this translates almost directly to the location on physical storage.
+ * @returns {string} Contents of the file as a string.
+ */
+export async function loadFromPhysicalFile(physicalFile) {
+  const path = physicalFile.value.replace('share://', '/share/');
+  return fs.readFile(path, 'utf-8');
+}
