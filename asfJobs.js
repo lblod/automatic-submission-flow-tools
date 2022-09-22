@@ -13,7 +13,7 @@ const { namedNode } = N3.DataFactory;
  */
 export async function create(activity, creator, graph) {
   const operation = namedNode(cts.OPERATIONS.automaticSubmissionFlow);
-  const cogsOperation = namedNode(cts.COGS_OPERATION.transformation);
+  const cogsOperation = namedNode(cts.COGS_OPERATIONS.transformation);
   return jbt.create(operation, activity, creator, cogsOperation, graph);
 }
 
