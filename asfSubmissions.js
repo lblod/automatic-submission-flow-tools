@@ -6,9 +6,7 @@
 import * as mu from 'mu';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
-import * as N3 from 'n3';
 import * as sjp from 'sparqljson-parse';
-const { namedNode } = N3.DataFactory;
 
 /**
  * Get some information about the Submission, its document and its downloaded file.
