@@ -48,3 +48,18 @@ export async function loadFromPhysicalFile(physicalFile) {
   const path = physicalFile.value.replace('share://', '/share/');
   return fs.readFile(path, 'utf-8');
 }
+
+/**
+ * Supply the contents of a file, given by its path, by a stream.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} physicalFile - Represents the IRI of the physical file. Usually this translates almost directly to the location on physical storage.
+ * @returns {stream} A stream to access the contents of the file.
+ */
+export async function loadStreamFromPhysicalFile(physicalFile) {
+  const path = physicalFile.value.replace('share://', '/share/');
+  const fileHandle = await fs.open(path);
+  return fileHandle.createReadStream({ encoding: 'utf-8' });
+}
