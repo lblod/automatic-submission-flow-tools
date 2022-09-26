@@ -121,7 +121,7 @@ export async function create(
           task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)} ;
           task:operation ${mu.sparqlEscapeUri(operation.value)} ;
           dct:creator ${mu.sparqlEscapeUri(creator.value)} ;
-          task:index ${mu.sparqlEscapeInt(index)} ;
+          task:index ${mu.sparqlEscapeString(index)} ;
           dct:isPartOf ${mu.sparqlEscapeUri(job.value)} .
         ${inputTriples}
       }
