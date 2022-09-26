@@ -63,7 +63,7 @@ export async function getTaskInfoFromRemoteDataObject(remoteDataObject) {
  * @async
  * @function
  * @param {namedNode} task - The task that might have an input container with attached files.
- * @returns {array(object)} An array with objects of the structure `{ file: namedNode }` that refer to the attached (logical) files.
+ * @returns {array(namedNode)} An array with nodes that refer to the attached (logical) files.
  */
 export async function getInputFilesFromTask(task) {
   const fileQuery = `
@@ -76,5 +76,6 @@ export async function getInputFilesFromTask(task) {
     }`;
   const response = await mas.querySudo(fileQuery);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
-  return sparqlJsonParser.parseJsonResults(response);
+  const parsedResults = sparqlJsonParser.parseJsonResults(response);
+  return parsedResults.map((f) => f.file);
 }
