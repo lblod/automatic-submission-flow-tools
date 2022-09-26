@@ -163,6 +163,11 @@ export async function updateStatus(task, status, creator, results, error) {
       cts.BASE_TABLE.resultsContainer.concat(resultsContainerUuid)
     );
     writer.addQuad(
+      task,
+      namedNode(`${cts.PREFIX_TABLE.task}resultsContainer`),
+      resultsContainer
+    );
+    writer.addQuad(
       resultsContainer,
       namedNode(`${cts.PREFIX_TABLE.rdf}type`),
       namedNode(`${cts.PREFIX_TABLE.nfo}DataContainer`)
