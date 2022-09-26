@@ -7,6 +7,7 @@ export const PREFIX_TABLE = {
   oslc: 'http://open-services.net/ns/core#',
   melding: 'http://lblod.data.gift/vocabularies/automatische-melding/',
   lblodBesluit: 'http://lblod.data.gift/vocabularies/besluit/',
+  besluit: 'http://data.vlaanderen.be/ns/besluit#',
   adms: 'http://www.w3.org/ns/adms#',
   muAccount: 'http://mu.semte.ch/vocabularies/account/',
   eli: 'http://data.europa.eu/eli/ontology#',
