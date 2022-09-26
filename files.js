@@ -27,18 +27,18 @@ export async function create(pathPrefix, extension, size, graph) {
   const filename = `${physicalUuid}.${extension}`;
   const path = pathPrefix.concat(filename);
   const physicalUri = path.replace('/share/', 'share://');
-  const logicalUri = cts.BASE_TABLE.asj.concat(logicalUuid);
+  const logicalUri = cts.BASE_TABLE.file.concat(logicalUuid);
   const nowSparql = mu.sparqlEscapeDateTime(new Date());
   const format = cts.FORMATS[extension];
 
   await mas.updateSudo(`
     ${cts.SPARQL_PREFIXES}
-    INSERT {
+    INSERT DATA {
       GRAPH ${mu.sparqlEscapeUri(graph.value)} {
         ${mu.sparqlEscapeUri(physicalUri)}
-          a nfo:FileDataObject;
+          a nfo:FileDataObject ;
           nie:dataSource ${mu.sparqlEscapeUri(logicalUri)} ;
-          mu:uuid ${mu.sparqlEscapeString(physicalUuid)};
+          mu:uuid ${mu.sparqlEscapeString(physicalUuid)} ;
           nfo:fileName ${mu.sparqlEscapeString(filename)} ;
           dct:creator ${mu.sparqlEscapeUri(cts.SERVICES.importSubmision)} ;
           dct:created ${nowSparql} ;
@@ -48,7 +48,7 @@ export async function create(pathPrefix, extension, size, graph) {
           dbpedia:fileExtension ${mu.sparqlEscapeString(extension)} .
 
         ${mu.sparqlEscapeUri(logicalUri)}
-          a nfo:FileDataObject;
+          a nfo:FileDataObject ;
           mu:uuid ${mu.sparqlEscapeString(logicalUuid)} ;
           nfo:fileName ${mu.sparqlEscapeString(filename)} ;
           dct:creator ${mu.sparqlEscapeUri(cts.SERVICES.importSubmision)} ;
