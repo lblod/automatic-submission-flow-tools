@@ -4,8 +4,6 @@
  */
 
 import * as uti from './utils.js';
-import * as N3 from 'n3';
-const { quad } = N3.DataFactory;
 
 /**
  * Get subjects after filtering the delta messages on a predicate and object.
