@@ -83,12 +83,14 @@ export const SUBMISSION_STATUSES = {
 export const SERVICES = {
   automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
   importSubmision: `${PREFIX_TABLE.services}import-submission-service`,
+  enrichSubmission: `${PREDICATE_TABLE.services}enrich-submission-service`,
 };
 
 export const OPERATIONS = {
   register: `${PREFIX_TABLE.tasko}register`,
   download: `${PREFIX_TABLE.tasko}download`,
   import: `${PREFIX_TABLE.tasko}import`,
+  enrich: `${PREFIX_TABLE.tasko}enrich`,
   automaticSubmissionFlow: `${PREFIX_TABLE.jobo}automaticSubmissionFlow`,
 };
 export const COGS_OPERATIONS = {
