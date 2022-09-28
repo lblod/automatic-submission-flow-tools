@@ -65,3 +65,83 @@ export async function create(pathPrefix, extension, size, graph) {
     physicalFilePath: path,
   };
 }
+
+/**
+ * Update file information after contents of the file have been updated. This means updating the file size and the modified date.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} logicalFile - The logical file represented by IRI.
+ * @param {integer} size - The new file size in bytes.
+ * @returns {undefined} Nothing
+ */
+export async function update(logicalFile, size) {
+  const nowSparql = mu.sparqlEscapeDateTime(new Date());
+  await mas.updateSudo(`
+    ${cts.SPARQL_PREFIXES}
+    DELETE {
+      GRAPH ?g {
+        ?physicalFile
+          dct:modified ?modified ;
+          nfo:fileSize ?fileSize .
+        ?logicalFile
+          dct:modified ?modified ;
+          nfo:fileSize ?fileSize .
+      }
+    }
+    INSERT {
+      GRAPH ?g {
+        ?physicalFile
+          dct:modified ${nowSparql} ;
+          nfo:fileSize ${mu.sparqlEscapeInt(size)} .
+        ?logicalFile
+          dct:modified ${nowSparql} ;
+          nfo:fileSize ${mu.sparqlEscapeInt(size)} .
+      }
+    }
+    WHERE {
+      GRAPH ?g {
+        BIND ( ${mu.sparqlEscapeUri(logicalFile.value)} as ?logicalFile )
+        ?physicalFile
+          a nfo:FileDataObject ;
+          nie:dataSource ?logicalFile .
+        ?logicalFile
+          a nfo:FileDataObject .
+      }
+    }
+  `);
+}
+
+/**
+ * Completely remove all information about the file from the triplestore. This includes the logical and physical file data.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} logicalFile - The IRI representing the file you want removed.
+ * @returns {undefined} Nothing
+ */
+export async function remove(logicalFile) {
+  await mas.updateSudo(`
+    ${cts.SPARQL_PREFIXES}
+    DELETE {
+      GRAPH ?g {
+        ?physicalFile ?pp ?op .
+        ?logicalFile ?pl ?ol .
+      }
+    }
+    WHERE {
+      GRAPH ?g {
+        BIND ( ${mu.sparqlEscapeUri(logicalFile.value)} as ?logicalFile )
+        ?physicalFile
+          a nfo:FileDataObject ;
+          nie:dataSource ?logicalFile ;
+          ?pp ?op .
+        ?logicalFile
+          a nfo:FileDataObject ;
+          ?pl ?ol .
+      }
+    }
+  `);
+}
