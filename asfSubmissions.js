@@ -74,7 +74,7 @@ export async function getSubmissionDocumentFromTask(task) {
   const response = await mas.querySudo(infoQuery);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
   const parsedResults = sparqlJsonParser.parseJsonResults(response);
-  return namedNode(parsedResults[0]);
+  return parsedResults[0]?.submissionDocument;
 }
 
 /**
