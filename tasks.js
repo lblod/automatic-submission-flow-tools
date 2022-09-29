@@ -152,7 +152,7 @@ export async function updateStatus(task, status, creator, results, error) {
   const writer = new N3.Writer();
 
   if (status.value === cts.JOB_STATUSES.failed && error)
-    writer.writeQuad(task, namedNode(`${cts.PREFIX_TABLE.task}error`), error);
+    writer.addQuad(task, namedNode(`${cts.PREFIX_TABLE.task}error`), error);
 
   if (
     status.value === cts.JOB_STATUSES.success &&
