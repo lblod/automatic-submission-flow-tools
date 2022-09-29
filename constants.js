@@ -8,6 +8,7 @@ export const PREFIX_TABLE = {
   melding: 'http://lblod.data.gift/vocabularies/automatische-melding/',
   lblodBesluit: 'http://lblod.data.gift/vocabularies/besluit/',
   besluit: 'http://data.vlaanderen.be/ns/besluit#',
+  mandaat: 'http://data.vlaanderen.be/ns/mandaat#',
   adms: 'http://www.w3.org/ns/adms#',
   muAccount: 'http://mu.semte.ch/vocabularies/account/',
   eli: 'http://data.europa.eu/eli/ontology#',
@@ -18,6 +19,7 @@ export const PREFIX_TABLE = {
   mu: 'http://mu.semte.ch/vocabularies/core/',
   foaf: 'http://xmlns.com/foaf/0.1/',
   nfo: 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#',
+  skos: 'http://www.w3.org/2004/02/skos/core#',
   dbpedia: 'http://dbpedia.org/ontology/',
   ext: 'http://mu.semte.ch/vocabularies/ext/',
   http: 'http://www.w3.org/2011/http#',
@@ -34,6 +36,7 @@ export const PREFIX_TABLE = {
   tasko: 'http://lblod.data.gift/id/jobs/concept/TaskOperation/',
   jobo: 'http://lblod.data.gift/id/jobs/concept/JobOperation/',
   hrvst: 'http://lblod.data.gift/vocabularies/harvesting/',
+  lblodlg: 'http://data.lblod.info/vocabularies/leidinggevenden/',
 };
 
 export const GRAPHS = {
