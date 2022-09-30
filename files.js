@@ -26,14 +26,14 @@ const { namedNode, literal } = N3.DataFactory;
 export async function create(pathPrefix, extension, size, creator, graph) {
   const physicalUuid = literal(uuid());
   const logicalUuid = literal(uuid());
-  const filename = literal(`${physicalUuid}.${extension}`);
+  const filename = literal(`${physicalUuid.value}.${extension}`);
   const path = pathPrefix.concat(filename.value);
   const physical = namedNode(path.replace('/share/', 'share://'));
-  const logical = namedNode(cts.BASE_TABLE.file.concat(logicalUuid));
+  const logical = namedNode(cts.BASE_TABLE.file.concat(logicalUuid.value));
   const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
   const nowSparql = rst.termToString(now);
   const format = literal(cts.FORMATS[extension]);
-  size = literal(size, cts.TYPES.integer);
+  size = literal(size, namedNode(cts.TYPES.integer));
   extension = literal(extension);
 
   await mas.updateSudo(`
@@ -84,7 +84,7 @@ export async function create(pathPrefix, extension, size, creator, graph) {
 export async function update(logicalFile, size) {
   const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
   const nowSparql = rst.termToString(now);
-  size = literal(size, cts.TYPES.integer);
+  size = literal(size, namedNode(cts.TYPES.integer));
   await mas.updateSudo(`
     ${cts.SPARQL_PREFIXES}
     DELETE {
