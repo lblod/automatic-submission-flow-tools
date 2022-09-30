@@ -3,10 +3,11 @@
  * @description Create and update tasks in the triplestore.
  */
 
-import * as mu from 'mu';
+import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as N3 from 'n3';
+import * as rst from 'rdf-string-ttl';
 const { namedNode, literal } = N3.DataFactory;
 
 /**
@@ -37,14 +38,15 @@ export async function create(
 ) {
   const files = inputs?.files || [];
   const remoteDataObjects = inputs?.remoteDataObjects || [];
-  const taskUuid = mu.uuid();
-  const taskUri = cts.BASE_TABLE.task.concat(taskUuid);
-  const nowSparql = mu.sparqlEscapeDateTime(new Date());
-  //cogsOperation = cogsOperation || namedNode(cts.COGS_OPERATION.transformation);
+  const taskUuid = literal(uuid());
+  const task = namedNode(cts.BASE_TABLE.task.concat(taskUuid.value));
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const nowSparql = rst.termToString(now);
   const writer = new N3.Writer();
+  index = literal(index.toString());
 
   if (files.length || remoteDataObjects.length) {
-    const inputContainerUuid = mu.uuid();
+    const inputContainerUuid = uuid();
     const inputContainer = namedNode(
       cts.BASE_TABLE.resultsContainer.concat(inputContainerUuid)
     );
@@ -67,7 +69,7 @@ export async function create(
     );
 
     if (remoteDataObjects.length) {
-      const harvestingCollectionUuid = mu.uuid();
+      const harvestingCollectionUuid = uuid();
       const harvestingCollection = namedNode(
         cts.BASE_TABLE.harvestingCollection.concat(harvestingCollectionUuid)
       );
@@ -111,24 +113,24 @@ export async function create(
   const taskQuery = `
     ${cts.SPARQL_PREFIXES}
     INSERT DATA {
-      GRAPH ${mu.sparqlEscapeUri(graph.value)} {
-        ${mu.sparqlEscapeUri(taskUri)}
+      GRAPH ${rst.termToString(graph)} {
+        ${rst.termToString(task)}
           a task:Task ;
-          mu:uuid ${mu.sparqlEscapeString(taskUuid)} ;
-          adms:status ${mu.sparqlEscapeUri(status.value)} ;
+          mu:uuid ${rst.termToString(taskUuid)} ;
+          adms:status ${rst.termToString(status)} ;
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
-          task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)} ;
-          task:operation ${mu.sparqlEscapeUri(operation.value)} ;
-          dct:creator ${mu.sparqlEscapeUri(creator.value)} ;
-          task:index ${mu.sparqlEscapeString(index)} ;
-          dct:isPartOf ${mu.sparqlEscapeUri(job.value)} .
+          task:cogsOperation ${rst.termToString(cogsOperation)} ;
+          task:operation ${rst.termToString(operation)} ;
+          dct:creator ${rst.termToString(creator)} ;
+          task:index ${rst.termToString(index)} ;
+          dct:isPartOf ${rst.termToString(job)} .
         ${inputTriples}
       }
     }
   `;
   await mas.updateSudo(taskQuery);
-  return namedNode(taskUri);
+  return task;
 }
 
 /**
@@ -147,18 +149,18 @@ export async function create(
 export async function updateStatus(task, status, creator, results, error) {
   const files = results?.files || [];
   const remoteDataObjects = results?.remoteDataObjects || [];
-  const taskUriSparql = mu.sparqlEscapeUri(task.value);
-  const nowSparql = mu.sparqlEscapeDateTime(new Date());
+  const taskSparql = rst.termToString(task);
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
   const writer = new N3.Writer();
 
   if (status.value === cts.JOB_STATUSES.failed && error)
-    writer.writeQuad(task, namedNode(`${cts.PREFIX_TABLE.task}error`), error);
+    writer.addQuad(task, namedNode(`${cts.PREFIX_TABLE.task}error`), error);
 
   if (
     status.value === cts.JOB_STATUSES.success &&
     (files.length || remoteDataObjects.length)
   ) {
-    const resultsContainerUuid = mu.uuid();
+    const resultsContainerUuid = uuid();
     const resultsContainer = namedNode(
       cts.BASE_TABLE.resultsContainer.concat(resultsContainerUuid)
     );
@@ -186,7 +188,7 @@ export async function updateStatus(task, status, creator, results, error) {
     );
 
     if (remoteDataObjects.length) {
-      const harvestingCollectionUuid = mu.uuid();
+      const harvestingCollectionUuid = uuid();
       const harvestingCollection = namedNode(
         cts.BASE_TABLE.harvestingCollection.concat(harvestingCollectionUuid)
       );
@@ -231,22 +233,22 @@ export async function updateStatus(task, status, creator, results, error) {
     ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ?g {
-        ${taskUriSparql}
+        ${taskSparql}
           adms:status ?oldStatus ;
           dct:modified ?oldModified .
       }
     }
     INSERT {
       GRAPH ?g {
-        ${taskUriSparql}
-          adms:status ${mu.sparqlEscapeUri(status.value)} ;
-          dct:modified ${nowSparql} .
+        ${taskSparql}
+          adms:status ${rst.termToString(status)} ;
+          dct:modified ${rst.termToString(now)} .
         ${errorsAndResultsTriples}
       }
     }
     WHERE {
       GRAPH ?g {
-        ${taskUriSparql}
+        ${taskSparql}
           adms:status ?oldStatus ;
           dct:modified ?oldModified .
       }
@@ -254,6 +256,3 @@ export async function updateStatus(task, status, creator, results, error) {
   `;
   await mas.updateSudo(statusQuery);
 }
-
-//export async function getStatusFromActivity(jobActivity, operation) {
-//}

@@ -8,6 +8,7 @@ export const PREFIX_TABLE = {
   melding: 'http://lblod.data.gift/vocabularies/automatische-melding/',
   lblodBesluit: 'http://lblod.data.gift/vocabularies/besluit/',
   besluit: 'http://data.vlaanderen.be/ns/besluit#',
+  mandaat: 'http://data.vlaanderen.be/ns/mandaat#',
   adms: 'http://www.w3.org/ns/adms#',
   muAccount: 'http://mu.semte.ch/vocabularies/account/',
   eli: 'http://data.europa.eu/eli/ontology#',
@@ -18,6 +19,7 @@ export const PREFIX_TABLE = {
   mu: 'http://mu.semte.ch/vocabularies/core/',
   foaf: 'http://xmlns.com/foaf/0.1/',
   nfo: 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#',
+  skos: 'http://www.w3.org/2004/02/skos/core#',
   dbpedia: 'http://dbpedia.org/ontology/',
   ext: 'http://mu.semte.ch/vocabularies/ext/',
   http: 'http://www.w3.org/2011/http#',
@@ -34,6 +36,7 @@ export const PREFIX_TABLE = {
   tasko: 'http://lblod.data.gift/id/jobs/concept/TaskOperation/',
   jobo: 'http://lblod.data.gift/id/jobs/concept/JobOperation/',
   hrvst: 'http://lblod.data.gift/vocabularies/harvesting/',
+  lblodlg: 'http://data.lblod.info/vocabularies/leidinggevenden/',
 };
 
 export const GRAPHS = {
@@ -83,12 +86,14 @@ export const SUBMISSION_STATUSES = {
 export const SERVICES = {
   automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
   importSubmision: `${PREFIX_TABLE.services}import-submission-service`,
+  enrichSubmission: `${PREDICATE_TABLE.services}enrich-submission-service`,
 };
 
 export const OPERATIONS = {
   register: `${PREFIX_TABLE.tasko}register`,
   download: `${PREFIX_TABLE.tasko}download`,
   import: `${PREFIX_TABLE.tasko}import`,
+  enrich: `${PREFIX_TABLE.tasko}enrich`,
   automaticSubmissionFlow: `${PREFIX_TABLE.jobo}automaticSubmissionFlow`,
 };
 export const COGS_OPERATIONS = {
@@ -98,6 +103,12 @@ export const COGS_OPERATIONS = {
 
 export const FORMATS = {
   ttl: 'text/turtle',
+};
+
+export const TYPES = {
+  date: `${PREFIX_TABLE.xsd}date`,
+  dateTime: `${PREFIX_TABLE.xsd}dateTime`,
+  integer: `${PREFIX_TABLE.xsd}integer`,
 };
 
 export const SPARQL_PREFIXES = (() => {

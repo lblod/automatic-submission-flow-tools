@@ -3,11 +3,12 @@
  * @description Create and update logical and physical file data in the triplestore.
  */
 
-import * as mu from 'mu';
+import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as N3 from 'n3';
-const { namedNode } = N3.DataFactory;
+import * as rst from 'rdf-string-ttl';
+const { namedNode, literal } = N3.DataFactory;
 
 /**
  * Create a logical and physical file and store it in the triplestore.
@@ -22,46 +23,133 @@ const { namedNode } = N3.DataFactory;
  * @returns {object} An object with structure `{ logicalFile: namedNode, physicalFile: namedNode, physicalFilePath: string }`. **This function does not store any contenst to physical storage, but only returns the full filepath that is used to store the file data. Use this path to store contents.**
  */
 export async function create(pathPrefix, extension, size, graph) {
-  const physicalUuid = mu.uuid();
-  const logicalUuid = mu.uuid();
-  const filename = `${physicalUuid}.${extension}`;
-  const path = pathPrefix.concat(filename);
-  const physicalUri = path.replace('/share/', 'share://');
-  const logicalUri = cts.BASE_TABLE.file.concat(logicalUuid);
-  const nowSparql = mu.sparqlEscapeDateTime(new Date());
-  const format = cts.FORMATS[extension];
+  const physicalUuid = literal(uuid());
+  const logicalUuid = literal(uuid());
+  const filename = literal(`${physicalUuid}.${extension}`);
+  const path = pathPrefix.concat(filename.value);
+  const physical = namedNode(path.replace('/share/', 'share://'));
+  const logical = namedNode(cts.BASE_TABLE.file.concat(logicalUuid));
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const nowSparql = rst.termToString(now);
+  const format = literal(cts.FORMATS[extension]);
+  //TODO WHY is this still a fixed thing????
+  const creator = namedNode(cts.SERVICES.importSubmision);
+  size = literal(size, cts.TYPES.integer);
+  extension = literal(extension);
 
   await mas.updateSudo(`
     ${cts.SPARQL_PREFIXES}
     INSERT DATA {
-      GRAPH ${mu.sparqlEscapeUri(graph.value)} {
-        ${mu.sparqlEscapeUri(physicalUri)}
+      GRAPH ${rst.termToString(graph)} {
+        ${rst.termToString(physical)}
           a nfo:FileDataObject ;
-          nie:dataSource ${mu.sparqlEscapeUri(logicalUri)} ;
-          mu:uuid ${mu.sparqlEscapeString(physicalUuid)} ;
-          nfo:fileName ${mu.sparqlEscapeString(filename)} ;
-          dct:creator ${mu.sparqlEscapeUri(cts.SERVICES.importSubmision)} ;
+          nie:dataSource ${rst.termToString(logical)} ;
+          mu:uuid ${rst.termToString(physicalUuid)} ;
+          nfo:fileName ${rst.termToString(filename)} ;
+          dct:creator ${rst.termToString(creator)} ;
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
-          dct:format ${mu.sparqlEscapeString(format)} ;
-          nfo:fileSize ${mu.sparqlEscapeInt(size)} ;
-          dbpedia:fileExtension ${mu.sparqlEscapeString(extension)} .
+          dct:format ${rst.termToString(format)} ;
+          nfo:fileSize ${rst.termToString(size)} ;
+          dbpedia:fileExtension ${rst.termToString(extension)} .
 
-        ${mu.sparqlEscapeUri(logicalUri)}
+        ${rst.termToString(logical)}
           a nfo:FileDataObject ;
-          mu:uuid ${mu.sparqlEscapeString(logicalUuid)} ;
-          nfo:fileName ${mu.sparqlEscapeString(filename)} ;
-          dct:creator ${mu.sparqlEscapeUri(cts.SERVICES.importSubmision)} ;
+          mu:uuid ${rst.termToString(logicalUuid)} ;
+          nfo:fileName ${rst.termToString(filename)} ;
+          dct:creator ${rst.termToString(creator)} ;
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
-          dct:format ${mu.sparqlEscapeString(format)} ;
-          nfo:fileSize ${mu.sparqlEscapeInt(size)} ;
-          dbpedia:fileExtension ${mu.sparqlEscapeString(extension)} .
+          dct:format ${rst.termToString(format)} ;
+          nfo:fileSize ${rst.termToString(size)} ;
+          dbpedia:fileExtension ${rst.termToString(extension)} .
       }
     }`);
   return {
-    logicalFile: namedNode(logicalUri),
-    physicalFile: namedNode(physicalUri),
+    logicalFile: logical,
+    physicalFile: physical,
     physicalFilePath: path,
   };
+}
+
+/**
+ * Update file information after contents of the file have been updated. This means updating the file size and the modified date.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} logicalFile - The logical file represented by IRI.
+ * @param {integer} size - The new file size in bytes.
+ * @returns {undefined} Nothing
+ */
+export async function update(logicalFile, size) {
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const nowSparql = rst.termToString(now);
+  size = literal(size, cts.TYPES.integer);
+  await mas.updateSudo(`
+    ${cts.SPARQL_PREFIXES}
+    DELETE {
+      GRAPH ?g {
+        ?physicalFile
+          dct:modified ?modified ;
+          nfo:fileSize ?fileSize .
+        ?logicalFile
+          dct:modified ?modified ;
+          nfo:fileSize ?fileSize .
+      }
+    }
+    INSERT {
+      GRAPH ?g {
+        ?physicalFile
+          dct:modified ${nowSparql} ;
+          nfo:fileSize ${rst.termToString(size)} .
+        ?logicalFile
+          dct:modified ${nowSparql} ;
+          nfo:fileSize ${rst.termToString(size)} .
+      }
+    }
+    WHERE {
+      GRAPH ?g {
+        BIND ( ${rst.termToString(logicalFile)} as ?logicalFile )
+        ?physicalFile
+          a nfo:FileDataObject ;
+          nie:dataSource ?logicalFile .
+        ?logicalFile
+          a nfo:FileDataObject .
+      }
+    }
+  `);
+}
+
+/**
+ * Completely remove all information about the file from the triplestore. This includes the logical and physical file data.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {namedNode} logicalFile - The IRI representing the file you want removed.
+ * @returns {undefined} Nothing
+ */
+export async function remove(logicalFile) {
+  await mas.updateSudo(`
+    ${cts.SPARQL_PREFIXES}
+    DELETE {
+      GRAPH ?g {
+        ?physicalFile ?pp ?op .
+        ?logicalFile ?pl ?ol .
+      }
+    }
+    WHERE {
+      GRAPH ?g {
+        BIND ( ${rst.termToString(logicalFile)} as ?logicalFile )
+        ?physicalFile
+          a nfo:FileDataObject ;
+          nie:dataSource ?logicalFile ;
+          ?pp ?op .
+        ?logicalFile
+          a nfo:FileDataObject ;
+          ?pl ?ol .
+      }
+    }
+  `);
 }
