@@ -33,7 +33,7 @@ export async function create(pathPrefix, extension, size, creator, graph) {
   const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
   const nowSparql = rst.termToString(now);
   const format = literal(cts.FORMATS[extension]);
-  size = literal(size, cts.TYPES.integer);
+  size = literal(size, namedNode(cts.TYPES.integer));
   extension = literal(extension);
 
   await mas.updateSudo(`
