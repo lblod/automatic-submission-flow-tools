@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "Collection of reusable functions used throughout the automatic-submission flow.",
   "main": "tools.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "doc-html": "jsdoc -c .jsdoc.json `git ls-files`",
+    "doc-md": "jsdoc2md -c .jsdoc.json `git ls-files` > docs.md",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --cache --fix"
   },
   "repository": {
     "type": "git",
@@ -23,15 +27,15 @@
   },
   "homepage": "https://github.com/lblod/automatic-submission-flow-tools#readme",
   "devDependencies": {
-    "jsdoc": "^3.6.11",
-    "jsdoc-to-markdown": "^7.1.1",
+    "@lblod/mu-auth-sudo": "^0.2.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.7.1",
-    "@lblod/mu-auth-sudo": "^0.2.0",
+    "jsdoc": "^3.6.11",
+    "jsdoc-to-markdown": "^7.1.1",
     "jsonld": "^8.1.0",
     "n3": "^1.16.2",
+    "prettier": "^2.7.1",
     "sparqljson-parse": "^2.1.1"
   },
   "peerDependencies": {
@@ -40,10 +44,8 @@
     "n3": "^1.16.2",
     "sparqljson-parse": "^2.1.1"
   },
-  "scripts": {
-    "doc-html": "jsdoc -c .jsdoc.json `git ls-files`",
-    "doc-md": "jsdoc2md -c .jsdoc.json `git ls-files` > docs.md",
-    "lint:js": "eslint . --cache",
-    "lint:js:fix": "eslint . --cache --fix"
+  "dependencies": {
+    "rdf-string-ttl": "^1.2.0",
+    "uuid": "^9.0.0"
   }
 }
