@@ -20,9 +20,10 @@ const { namedNode, literal } = N3.DataFactory;
  * @param {string} extension - The file extension. Will also be used to lookup the MIME type of the contents.
  * @param {number} size - The file size in bytes.
  * @param {namedNode} graph - Represents the graph IRI where these logical and physical files will be stored.
+ * @param {namedNode} creator - The identifier for the service that creates this File.
  * @returns {object} An object with structure `{ logicalFile: namedNode, physicalFile: namedNode, physicalFilePath: string }`. **This function does not store any contenst to physical storage, but only returns the full filepath that is used to store the file data. Use this path to store contents.**
  */
-export async function create(pathPrefix, extension, size, graph) {
+export async function create(pathPrefix, extension, size, creator, graph) {
   const physicalUuid = literal(uuid());
   const logicalUuid = literal(uuid());
   const filename = literal(`${physicalUuid}.${extension}`);
@@ -32,8 +33,6 @@ export async function create(pathPrefix, extension, size, graph) {
   const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
   const nowSparql = rst.termToString(now);
   const format = literal(cts.FORMATS[extension]);
-  //TODO WHY is this still a fixed thing????
-  const creator = namedNode(cts.SERVICES.importSubmision);
   size = literal(size, cts.TYPES.integer);
   extension = literal(extension);
 

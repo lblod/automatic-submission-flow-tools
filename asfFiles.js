@@ -25,16 +25,17 @@ export async function create() {
  * @async
  * @function
  * @param {string|buffer|...} content - The contents that will be written to a file. This is converted to a buffer first, so anything the Node's `Buffer.from()` will take is fine.
+ * @param {namedNode} creator - The identifier for the service that creates this File.
  * @param {namedNode} graph - The graph in which the file data is to be stored.
  * @returns {object} Same object as received from `files.create`.
  */
-export async function createFromContent(content, graph) {
+export async function createFromContent(content, creator, graph) {
   const pathPrefix = '/share/submissions/';
   const buffer = Buffer.from(content);
   const fileSize = Buffer.byteLength(buffer);
   const extension = 'ttl';
 
-  const filesData = await fil.create(pathPrefix, extension, fileSize, graph);
+  const filesData = await fil.create(pathPrefix, extension, fileSize, creator, graph);
   await fs.writeFile(filesData.physicalFilePath, buffer, 'utf-8');
   return filesData;
 }
