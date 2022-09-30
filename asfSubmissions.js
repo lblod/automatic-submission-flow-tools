@@ -3,12 +3,12 @@
  * @description Retreive and set information about Submissions in the triplestore.
  */
 
-import * as mu from 'mu';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as sjp from 'sparqljson-parse';
 import * as N3 from 'n3';
-const { namedNode } = N3.DataFactory;
+import * as rst from 'rdf-string-ttl';
+const { literal } = N3.DataFactory;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Submissions
@@ -24,7 +24,7 @@ const { namedNode } = N3.DataFactory;
  * @returns {array(object)} An array of objects with the structure: `{ submission: namedNode, documentUrl: literal, file: namedNode, submittedDocument: namedNode }` that contains information about the Submission.
  */
 export async function getSubmissionInfoFromRemoteDataObject(remoteDataObject) {
-  const remoteDataObjectSparql = mu.sparqlEscapeUri(remoteDataObject.value);
+  const remoteDataObjectSparql = rst.termToString(remoteDataObject);
   const infoQuery = `
     ${cts.SPARQL_PREFIXES}
     SELECT ?submission ?documentUrl ?file ?submittedDocument ?graph WHERE {
@@ -62,7 +62,7 @@ export async function getSubmissionDocumentFromTask(task) {
     SELECT ?submissionDocument
     WHERE {
       GRAPH ?g {
-        ${mu.sparqlEscapeUri(task.value)}
+        ${rst.termToString(task)}
           a task:Task ;
           dct:isPartOf ?job .
         ?job prov:generatedBy ?submission .
@@ -93,7 +93,7 @@ export async function getSubmissionDocumentInfoById(uuid) {
     WHERE {
       GRAPH ?g {
         ?submissionDocument
-          mu:uuid ${mu.sparqlEscapeString(uuid)} .
+          mu:uuid ${rst.termToString(literal(uuid))} .
         ?submission
           dct:subject ?submissionDocument ;
           adms:status ?status .

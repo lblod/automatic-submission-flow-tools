@@ -3,13 +3,13 @@
  * @description Manage file data in the triplestore, more specifically tailored for the automatic-submission-flow. Some functions also deal with reading and writing contents to physical storage.
  */
 
-import * as mu from 'mu';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as fs from 'node:fs/promises';
 import { Buffer } from 'node:buffer';
 import * as fil from './files.js';
 import * as sjp from 'sparqljson-parse';
 import * as cts from './constants.js';
+import * as rst from 'rdf-string-ttl';
 
 /**
  * @see {@link module:files.create}
@@ -81,7 +81,7 @@ export async function loadFromLogicalFile(logicalFile) {
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     SELECT ?physicalFile WHERE {
-      ?physicalFile nie:dataSource ${mu.sparqlEscapeUri(logicalFile.value)} .
+      ?physicalFile nie:dataSource ${rst.termToString(logicalFile)} .
     } LIMIT 1
   `);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
@@ -107,7 +107,7 @@ export async function updateContentForPhysicalFile(physicalFile, content) {
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     SELECT ?logicalFile WHERE {
-      ${mu.sparqlEscapeUri(physicalFile.value)} nie:dataSource ?logicalFile .
+      ${rst.termToString(physicalFile)} nie:dataSource ?logicalFile .
     } LIMIT 1
   `);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
@@ -131,7 +131,7 @@ export async function updateContentForLogicalFile(logicalFile, content) {
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     SELECT ?physicalFile WHERE {
-      ?physicalFile nie:dataSource ${mu.sparqlEscapeUri(logicalFile.value)} .
+      ?physicalFile nie:dataSource ${rst.termToString(logicalFile)} .
     } LIMIT 1
   `);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
@@ -157,7 +157,7 @@ export async function removeFromPhysicalFile(physicalFile) {
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     SELECT ?logicalFile WHERE {
-      ${mu.sparqlEscapeUri(physicalFile.value)} nie:dataSource ?logicalFile .
+      ${rst.termToString(physicalFile)} nie:dataSource ?logicalFile .
     } LIMIT 1
   `);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
@@ -181,7 +181,7 @@ export async function removeFromLogicalFile(logicalFile) {
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     SELECT ?physicalFile WHERE {
-      ?physicalFile nie:dataSource ${mu.sparqlEscapeUri(logicalFile.value)} .
+      ?physicalFile nie:dataSource ${rst.termToString(logicalFile)} .
     } LIMIT 1
   `);
   const sparqlJsonParser = new sjp.SparqlJsonParser();

@@ -105,6 +105,12 @@ export const FORMATS = {
   ttl: 'text/turtle',
 };
 
+export const TYPES = {
+  date: `${PREFIX_TABLE.xsd}date`,
+  dateTime: `${PREFIX_TABLE.xsd}dateTime`,
+  integer: `${PREFIX_TABLE.xsd}integer`,
+};
+
 export const SPARQL_PREFIXES = (() => {
   const all = [];
   for (const key in PREFIX_TABLE)

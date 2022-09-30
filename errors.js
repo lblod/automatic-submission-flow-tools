@@ -3,11 +3,12 @@
  * @description Manage storing errors to the triplestore.
  */
 
-import * as mu from 'mu';
+import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as N3 from 'n3';
-const { namedNode } = N3.DataFactory;
+import * as rst from 'rdf-string-ttl';
+const { namedNode, literal } = N3.DataFactory;
 
 /**
  * Create an Error and store it in the triplestore.
@@ -21,31 +22,38 @@ const { namedNode } = N3.DataFactory;
  * @returns {namedNode} The IRI of the created Error.
  */
 export async function create(message, detail, reference) {
-  const errorId = mu.uuid();
-  const errorUri = cts.BASE_TABLE.error.concat(errorId);
+  const errorId = literal(uuid());
+  const error = cts.BASE_TABLE.error.concat(errorId.value);
+  message = literal(message);
+  detail = literal(detail);
+  const subject = literal('Automatic Submission Service');
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const errorGraph = namedNode(cts.GRAPHS.error);
+  //TODO WHY is this still a fixed IRI???
+  const creator = namedNode(cts.SERVICES.automaticSubmission);
   const referenceTriple = reference
-    ? `${mu.sparqlEscapeUri(errorUri)}
-         dct:references ${mu.sparqlEscapeUri(reference)} .`
+    ? `${rst.termToString(error)}
+         dct:references ${rst.termToString(reference)} .`
     : '';
   const detailTriple = detail
-    ? `${mu.sparqlEscapeUri(errorUri)}
-         oslc:largePreview ${mu.sparqlEscapeString(detail)} .`
+    ? `${rst.termToString(error)}
+         oslc:largePreview ${rst.termToString(detail)} .`
     : '';
   const errorQuery = `
     ${cts.SPARQL_PREFIXES}
     INSERT DATA {
-      GRAPH ${mu.sparqlEscapeUri(cts.GRAPHS.error)} {
-        ${mu.sparqlEscapeUri(errorUri)}
+      GRAPH ${rst.termToString(errorGraph)} {
+        ${rst.termToString(error)}
           a oslc:Error ;
-          mu:uuid ${mu.sparqlEscapeString(errorId)} ;
-          dct:subject ${mu.sparqlEscapeString('Automatic Submission Service')} ;
-          oslc:message ${mu.sparqlEscapeString(message)} ;
-          dct:created ${mu.sparqlEscapeDateTime(new Date().toISOString())} ;
-          dct:creator ${mu.sparqlEscapeUri(cts.SERVICES.automaticSubmission)} .
+          mu:uuid ${rst.termToString(errorId)} ;
+          dct:subject ${rst.termToString(subject)} ;
+          oslc:message ${rst.termToString(message)} ;
+          dct:created ${rst.termToString(now)} ;
+          dct:creator ${rst.termToString(creator)} .
         ${referenceTriple}
         ${detailTriple}
       }
     }`;
   await mas.updateSudo(errorQuery);
-  return namedNode(errorUri);
+  return error;
 }

@@ -3,11 +3,12 @@
  * @description Create and update tasks in the triplestore, more specifically tailored for the automatic-submission-flow.
  */
 
-import * as mu from 'mu';
+import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as tsk from './tasks.js';
 import * as sjp from 'sparqljson-parse';
+import * as rst from 'rdf-string-ttl';
 
 /**
  * @see {@link module:tasks.create}
@@ -33,7 +34,7 @@ export async function updateStatus() {
  * @returns {object} A JavaScript object with the following information about the Task: `{namedNode} task`, `{namedNode} job`, `{namedNode} status`, `{namedNode} submissionGraph`, `{namedNode} [file]` and `{namedNode} [errorMsg]`, or `undefined` when no Task was found.
  */
 export async function getTaskInfoFromRemoteDataObject(remoteDataObject) {
-  const remoteDataObjectUriSparql = mu.sparqlEscapeUri(remoteDataObject.value);
+  const remoteDataObjectUriSparql = rst.termToString(remoteDataObject);
   //NOTE this query is rather fragile, relying on the links between melding, job and task via non-documented properties, made by the download-url-service
   const taskQuery = `
     ${cts.SPARQL_PREFIXES}
@@ -69,7 +70,7 @@ export async function getInputFilesFromTask(task) {
   const fileQuery = `
     ${cts.SPARQL_PREFIXES}
     SELECT ?file WHERE {
-      ${mu.sparqlEscapeUri(task.value)}
+      ${rst.termToString(task)}
         task:inputContainer ?inputContainer .
       ?inputContainer
         task:hasFile ?file .

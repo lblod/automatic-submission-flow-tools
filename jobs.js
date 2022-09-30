@@ -3,12 +3,13 @@
  * @description Create and update Jobs in the triplestore.
  */
 
-import * as mu from 'mu';
+import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as N3 from 'n3';
 import * as sjp from 'sparqljson-parse';
-const { namedNode, quad } = N3.DataFactory;
+import * as rst from 'rdf-string-ttl';
+const { namedNode, quad, literal } = N3.DataFactory;
 
 /**
  * Create a Job and store it in the triplestore.
@@ -30,29 +31,28 @@ export async function create(
   cogsOperation,
   graph
 ) {
-  const jobUuid = mu.uuid();
-  const jobUri = cts.BASE_TABLE.job.concat(jobUuid);
-  const nowSparql = mu.sparqlEscapeDateTime(new Date());
+  const jobUuid = literal(uuid());
+  const job = namedNode(cts.BASE_TABLE.job.concat(jobUuid.value));
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const nowSparql = rst.termToString(now);
   const jobQuery = `
     ${cts.SPARQL_PREFIXES}
     INSERT DATA {
-      GRAPH ${mu.sparqlEscapeUri(graph.value)} {
-        ${mu.sparqlEscapeUri(jobUri)}
+      GRAPH ${rst.termToString(graph)} {
+        ${rst.termToString(job)}
           a cogs:Job ;
-          mu:uuid ${mu.sparqlEscapeString(jobUuid)} ;
-          dct:creator ${mu.sparqlEscapeUri(creator.value)} ;
-          adms:status ${mu.sparqlEscapeUri(cts.JOB_STATUSES.busy)} ;
+          mu:uuid ${rst.termToString(jobUuid)} ;
+          dct:creator ${rst.termToString(creator)} ;
+          adms:status ${rst.termToString(namedNode(cts.JOB_STATUSES.busy))} ;
           dct:created ${nowSparql} ;
           dct:modified ${nowSparql} ;
-          task:operation ${mu.sparqlEscapeUri(operation.value)} ;
-          task:cogsOperation ${mu.sparqlEscapeUri(cogsOperation.value)} ;
-          prov:generatedBy ${mu.sparqlEscapeUri(activity.value)} .
+          task:operation ${rst.termToString(operation)} ;
+          task:cogsOperation ${rst.termToString(cogsOperation)} ;
+          prov:generatedBy ${rst.termToString(activity)} .
       }
     }`;
-  //task:operation jobo:automaticSubmissionFlow ;
-  //task:cogsOperation cogs:TransformationProcess ;
   await mas.updateSudo(jobQuery);
-  return namedNode(jobUri);
+  return job;
 }
 
 /**
@@ -67,32 +67,33 @@ export async function create(
  * @returns {undefined} Nothing
  */
 export async function updateStatus(job, status, error) {
-  const jobUriSparql = mu.sparqlEscapeUri(job.value);
-  const nowSparql = mu.sparqlEscapeDateTime(new Date());
+  const jobSparql = rst.termToString(job);
+  const now = literal(new Date().toISOString(), namedNode(cts.TYPES.dateTime));
+  const nowSparql = rst.termToString(now);
   const errorTriple =
     status.value === cts.JOB_STATUSES.fail && error
-      ? `${jobUriSparql} task:error ${mu.sparqlEscapeUri(error).value} .`
+      ? `${jobSparql} task:error ${rst.termToString(error)} .`
       : '';
   const statusQuery = `
     ${cts.SPARQL_PREFIXES}
     DELETE {
       GRAPH ?g {
-        ${jobUriSparql}
+        ${jobSparql}
           adms:status ?oldStatus ;
           dct:modified ?oldModified .
       }
     }
     INSERT {
       GRAPH ?g {
-        ${jobUriSparql}
-          adms:status ${mu.sparqlEscapeUri(status.value)} ;
+        ${jobSparql}
+          adms:status ${rst.termToString(status)} ;
           dct:modified ${nowSparql} .
         ${errorTriple}
       }
     }
     WHERE {
       GRAPH ?g {
-        ${jobUriSparql}
+        ${jobSparql}
           adms:status ?oldStatus ;
           dct:modified ?oldModified .
       }
@@ -110,7 +111,7 @@ export async function updateStatus(job, status, error) {
  * @returns {store} A store containing information about the Job status, type, activity and optional error with its message.
  */
 export async function getStatusFromActivity(activity) {
-  const activitySparql = mu.sparqlEscapeUri(activity.value);
+  const activitySparql = rst.termToString(activity);
   const response = await mas.querySudo(`
     ${cts.SPARQL_PREFIXES}
     CONSTRUCT {
