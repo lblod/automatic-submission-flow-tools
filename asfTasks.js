@@ -3,7 +3,6 @@
  * @description Create and update tasks in the triplestore, more specifically tailored for the automatic-submission-flow.
  */
 
-import { v4 as uuid } from 'uuid';
 import * as mas from '@lblod/mu-auth-sudo';
 import * as cts from './constants.js';
 import * as tsk from './tasks.js';
