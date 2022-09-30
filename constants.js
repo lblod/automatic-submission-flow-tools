@@ -86,7 +86,7 @@ export const SUBMISSION_STATUSES = {
 export const SERVICES = {
   automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
   importSubmision: `${PREFIX_TABLE.services}import-submission-service`,
-  enrichSubmission: `${PREDICATE_TABLE.services}enrich-submission-service`,
+  enrichSubmission: `${PREFIX_TABLE.services}enrich-submission-service`,
 };
 
 export const OPERATIONS = {
