@@ -24,7 +24,7 @@ const { namedNode, literal } = N3.DataFactory;
  */
 export async function create(creator, message, detail, reference) {
   const errorId = literal(uuid());
-  const error = cts.BASE_TABLE.error.concat(errorId.value);
+  const error = namedNode(cts.BASE_TABLE.error.concat(errorId.value));
   message = literal(message);
   detail = literal(detail);
   const subject = literal('Automatic Submission Service');
