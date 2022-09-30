@@ -35,7 +35,13 @@ export async function createFromContent(content, creator, graph) {
   const fileSize = Buffer.byteLength(buffer);
   const extension = 'ttl';
 
-  const filesData = await fil.create(pathPrefix, extension, fileSize, creator, graph);
+  const filesData = await fil.create(
+    pathPrefix,
+    extension,
+    fileSize,
+    creator,
+    graph
+  );
   await fs.writeFile(filesData.physicalFilePath, buffer, 'utf-8');
   return filesData;
 }
