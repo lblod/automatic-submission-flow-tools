@@ -33,7 +33,8 @@ export async function getSubmissionInfo(submission) {
         ?submission
           nie:hasPart ?remoteDataObject ;
           prov:atLocation ?documentUrl ;
-          dct:subject ?submittedDocument .
+          dct:subject ?submittedDocument ;
+          adms:status ?status .
         BIND ( ${rst.termToString(submission)} as ?submission )
       }
     } LIMIT 1`;
@@ -82,7 +83,7 @@ export async function getSubmissionInfoFromRemoteDataObject(remoteDataObject) {
  * @returns {object} A JavaScript object with the following information about the Submission: `{namedNode} submission`, `{literal} documentUrl`, `{namedNode} submittedDocument`, `{namedNode} status` and `{namedNode} graph` that contains information about the Submission.
  */
 export async function getSubmissionInfoFromTask(task) {
-  const infoQuery = await mas.querySudo(`
+  const infoQuery = `
     ${cts.SPARQL_PREFIXES}
     SELECT ?submission ?documentUrl ?submittedDocument ?status ?graph
     WHERE {
@@ -92,12 +93,12 @@ export async function getSubmissionInfoFromTask(task) {
           dct:isPartOf ?job .
         ?job prov:generatedBy ?submission .
         ?submission
-          dct:subject ?submissionDocument ;
+          dct:subject ?submittedDocument ;
           prov:atLocation ?documentUrl ;
           adms:status ?status .
       }
     } LIMIT 1
-  `);
+  `;
   const response = await mas.querySudo(infoQuery);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
   const parsedResults = sparqlJsonParser.parseJsonResults(response);
@@ -114,7 +115,7 @@ export async function getSubmissionInfoFromTask(task) {
  * @returns {object} A JavaScript object with the following information about the Submission: `{namedNode} submission`, `{literal} documentUrl`, `{namedNode} submittedDocument`, `{namedNode} status` and `{namedNode} graph` that contains information about the Submission.
  */
 export async function getSubmissionInfoFromSubmissionDocumentId(id) {
-  const infoQuery = await mas.querySudo(`
+  const infoQuery = `
     ${cts.SPARQL_PREFIXES}
     SELECT ?submission ?documentUrl ?submittedDocument ?status ?graph
     WHERE {
@@ -126,7 +127,7 @@ export async function getSubmissionInfoFromSubmissionDocumentId(id) {
           adms:status ?status .
       }
     } LIMIT 1
-  `);
+  `;
   const response = await mas.querySudo(infoQuery);
   const sparqlJsonParser = new sjp.SparqlJsonParser();
   const parsedResults = sparqlJsonParser.parseJsonResults(response);
