@@ -74,3 +74,46 @@ export function parseSparqlJsonBindingQuad(rawBinding) {
     parseSparqlJsonTerm(rawBinding.graph || rawBinding.g)
   );
 }
+
+/**
+ * Convert plain Turtle content to an RDF Store.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {string} turtleContent - This is the content you want to be parsed as RDF data.
+ * @returns {n3.store} The parsed turtle content as an RDF Store.
+ */
+export async function ttlToStore(turtleContent) {
+  const store = new N3.Store();
+  if (!turtleContent) return store;
+  const parser = new N3.Parser({ format: 'text/turtle' });
+  return new Promise((resolve, reject) => {
+    parser.parse(turtleContent, (err, quad, prefixes) => {
+      if (err) reject(err);
+      else if (prefixes) resolve(store);
+      else store.addQuad(quad);
+    });
+  });
+}
+
+/**
+ * Convert an RDF Store to plain Turtle content.
+ *
+ * @public
+ * @async
+ * @function
+ * @param {n3.store} [store] - The store with triples that you want converted.
+ * @returns {string} The content of the stored written out as plain Turtle data.
+ */
+export async function storeToTtl(store) {
+  if (!store) return '';
+  const writer = new N3.Writer({ format: 'text/turtle' });
+  writer.addQuads([...store]);
+  return new Promise((resolve, reject) => {
+    writer.end((err, result) => {
+      if (err) reject(err);
+      else resolve(result);
+    });
+  });
+}

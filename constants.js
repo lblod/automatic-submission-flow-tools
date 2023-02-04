@@ -87,6 +87,7 @@ export const SERVICES = {
   automaticSubmission: `${PREFIX_TABLE.services}automatic-submission-service`,
   importSubmision: `${PREFIX_TABLE.services}import-submission-service`,
   enrichSubmission: `${PREFIX_TABLE.services}enrich-submission-service`,
+  validateSubmission: `${PREFIX_TABLE.services}validate-submission-service`,
 };
 
 export const OPERATIONS = {
@@ -94,6 +95,7 @@ export const OPERATIONS = {
   download: `${PREFIX_TABLE.tasko}download`,
   import: `${PREFIX_TABLE.tasko}import`,
   enrich: `${PREFIX_TABLE.tasko}enrich`,
+  validate: `${PREFIX_TABLE.tasko}validate`,
   automaticSubmissionFlow: `${PREFIX_TABLE.jobo}automaticSubmissionFlow`,
 };
 export const COGS_OPERATIONS = {
